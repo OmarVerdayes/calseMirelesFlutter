@@ -1,8 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:learning_b/navigation/home.dart';
 import 'package:learning_b/navigation/profile.dart';
 import 'package:learning_b/navigation/reservations.dart';
 import 'package:learning_b/navigation/top.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:learning_b/modules/map/map_sample.dart';
 
 class navigation extends StatefulWidget {
@@ -13,7 +15,7 @@ class navigation extends StatefulWidget {
 }
 
 class _navigationState extends State<navigation> {
-  int _selectedIndex =0;
+  int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     home(),
     top(),
@@ -27,6 +29,25 @@ class _navigationState extends State<navigation> {
       _selectedIndex = index;
     });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkTutorial();
+  }
+
+  Future<void> _checkTutorial() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isTutorialDone = prefs.getBool('tutorialDone');
+    final previousRouteName = ModalRoute.of(context)?.settings.arguments;
+    if (previousRouteName != "tutorial") {
+      if (isTutorialDone == null) {
+        Navigator.pushNamed(context, "/tutorial");
+      }
+    }
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,8 +80,16 @@ class _navigationState extends State<navigation> {
         onTap: _onItemTapped,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
-        
       ),
     );
   }
 }
+
+
+
+
+
+
+
+
+
